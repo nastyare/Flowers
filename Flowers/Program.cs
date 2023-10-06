@@ -19,54 +19,74 @@ namespace Csv
                 HasHeaderRecord = false,
             };
 
-            Console.WriteLine("Введите месяц: ");
-            var currentMonth = Console.ReadLine();
-
-            string smallestFlowerName = null;
-            string smallestFlowerSize = null; 
-
-            try
+            while (true)
             {
-                using (var reader = new StreamReader(filePath))
-                using (var csv = new CsvReader(reader, csvConfig))
+                Console.WriteLine("Введите месяц: ");
+                var currentMonth = Console.ReadLine().ToLower();
+
+                switch (currentMonth)
                 {
-                   var records = csv.GetRecords<FlowersInfo>();                        
-                  
-                   foreach (var record in records)
-                   {
-                        if (record.months.Contains(currentMonth))
+                    case "декабрь":
+                    case "январь":
+                    case "февраль":
+                        Console.WriteLine("В этом месяце цветы не цветут.");
+                        break;
+                    case "март":
+                    case "апрель":
+                    case "май":
+                    case "июнь":
+                    case "июль":
+                    case "август":
+                    case "сентябрь":
+                    case "октябрь":
+                    case "ноябрь":
+                        string smallestFlowerName = null;
+                        string smallestFlowerSize = null;
+
+                        try
                         {
-                            Console.WriteLine($"Название: {record.name}, размер цветка (в см): {record.size}");                          
-                            if (smallestFlowerSize == null || Convert.ToInt32(record.size) < Convert.ToInt32(smallestFlowerSize))
+                            using (var reader = new StreamReader(filePath))
+                            using (var csv = new CsvReader(reader, csvConfig))
                             {
-                                smallestFlowerName = record.name;
-                                smallestFlowerSize = record.size;
+                                var records = csv.GetRecords<FlowersInfo>();
+
+                                foreach (var record in records)
+                                {
+                                    if (record.months.Contains(currentMonth))
+                                    {
+                                        Console.WriteLine($"Название: {record.name}, размер цветка (в см): {record.size}");
+                                        if (smallestFlowerSize == null || Convert.ToInt32(record.size) < Convert.ToInt32(smallestFlowerSize))
+                                        {
+                                            smallestFlowerName = record.name;
+                                            smallestFlowerSize = record.size;
+                                        }
+                                    }
+                                }
+                                if (smallestFlowerName != null)
+                                {
+                                    Console.WriteLine($"Самый маленький цветок: {smallestFlowerName}\nРазмер: {smallestFlowerSize}см");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("В этом месяце цветы не цветут.");
+                                }
                             }
-                                        
                         }
-                        
-                        
-                   }
-                   if (smallestFlowerName != null)
-                   {
-                       Console.WriteLine($"Самый маленький цветок: {smallestFlowerName}\nРазмер: {smallestFlowerSize}см");
-                   }
-                   else
-                   {
-                       Console.WriteLine("В этом месяце цветы не цветут.");
-                   }
-                } 
-            } catch (Exception ex)
-            {
-                Console.WriteLine($"Error");
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error: {ex.Message}");
+                        }
+                        break;
+                    default:
+                        Console.WriteLine("Такого месяца не существует.");
+                        break;
+                }
             }
-            
-
         }
-
     }
 
-    
+
+
     public class FlowersInfo
     {
         public string name { get; set; }
